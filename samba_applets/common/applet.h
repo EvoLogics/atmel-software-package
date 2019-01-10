@@ -32,6 +32,7 @@
 
 #include <stdbool.h>
 #include <stdint.h>
+#include "gpio/pio.h"
 
 /*----------------------------------------------------------------------------
  *         Global definitions
@@ -48,6 +49,11 @@
 #define APPLET_CMD_WRITE_BOOTCFG     0x35 /* Write Boot Config */
 #define APPLET_CMD_TAG_BLOCK         0x36 /* Tag / untag block as bad */
 #define APPLET_CMD_ENABLE_BOOT_PART  0x37 /* Enable / disable eMMC boot partition */
+
+#define APPLET_CMD_GPIO_CFG          0x50 /* Configure GPIO pin */
+#define APPLET_CMD_GPIO_SET          0x51 /* Set GPIO pin */
+#define APPLET_CMD_GPIO_CLEAR        0x52 /* Clear GPIO pin */
+#define APPLET_CMD_GPIO_GET          0x53 /* Get GPIO pin */
 
 #define APPLET_SUCCESS               0x00 /* Operation was successful */
 #define APPLET_DEV_UNKNOWN           0x01 /* Device unknown */
@@ -175,6 +181,22 @@ union boot_partition_mailbox {
 	struct {
 		/** Memory size (in pages) */
 		uint32_t mem_size;
+	} out;
+};
+
+/** Mailbox content for the 'configure/set/clear/get gpio pin' command. */
+union gpio_mailbox
+{
+	struct {
+		uint32_t group;     /*< The IO group containing the pins you want to use. */
+		uint32_t mask;      /*< Bitmask indicating which pin(s) to configure. */
+		uint32_t type;      /*< Pin type */
+		uint32_t attribute; /*< Pin config attribute. */
+	} in;
+
+	struct {
+		/** GPIO value */
+		uint32_t value;
 	} out;
 };
 
